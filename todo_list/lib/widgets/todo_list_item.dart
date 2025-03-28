@@ -13,7 +13,7 @@ class TodoListItem extends StatelessWidget {
   Widget build(BuildContext context) {
     return Slidable(
       endActionPane: ActionPane(
-        extentRatio: 0.5,
+        extentRatio: 0.3,
         motion: const ScrollMotion(),
         children: [
           SlidableAction(
@@ -23,13 +23,13 @@ class TodoListItem extends StatelessWidget {
             icon: Icons.delete,
             label: 'Deletar',
           ),
-          SlidableAction(
-            onPressed: null,
-            backgroundColor: Color.fromARGB(255, 4, 188, 212),
-            foregroundColor: Colors.white,
-            icon: Icons.edit,
-            label: 'Editar',
-          ),
+          // SlidableAction(
+          //   onPressed: null,
+          //   backgroundColor: Color.fromARGB(255, 4, 188, 212),
+          //   foregroundColor: Colors.white,
+          //   icon: Icons.edit,
+          //   label: 'Editar',
+          // ),
         ],
       ),
       child: Container(

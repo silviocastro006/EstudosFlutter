@@ -3,7 +3,7 @@ import 'package:todo_list/widgets/todo_list_item.dart';
 import 'package:todo_list/models/todo.dart';
 
 class TodoListPage extends StatefulWidget {
-  TodoListPage({super.key});
+  const TodoListPage({super.key});
 
   @override
   State<TodoListPage> createState() => _TodoListPageState();
@@ -11,6 +11,9 @@ class TodoListPage extends StatefulWidget {
 
 class _TodoListPageState extends State<TodoListPage> {
   List<Todo> todos = [];
+
+  Todo? deletedTodo;
+  int? deletedTodoPos;
 
   final TextEditingController todoController = TextEditingController();
 
@@ -88,11 +91,7 @@ class _TodoListPageState extends State<TodoListPage> {
                     ),
                     SizedBox(width: 8),
                     ElevatedButton(
-                      onPressed: () {
-                        setState(() {
-                          todos.clear();
-                        });
-                      },
+                      onPressed: showDeleteTodosConfirmationDialog,
                       style: ElevatedButton.styleFrom(
                         backgroundColor: Color.fromARGB(255, 199, 199, 199),
                         foregroundColor: Colors.white,
@@ -113,8 +112,63 @@ class _TodoListPageState extends State<TodoListPage> {
   }
 
   void onDelete(Todo todo) {
+    deletedTodo = todo;
+    deletedTodoPos = todos.indexOf(todo);
+
     setState(() {
       todos.remove(todo);
+    });
+
+    ScaffoldMessenger.of(context).clearSnackBars();
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text(
+          'Tarefa ${todo.title} foi removida com sucesso!',
+          style: TextStyle(color: Colors.black),
+        ),
+        backgroundColor: Colors.white,
+        action: SnackBarAction(
+          label: 'Desfazer',
+          textColor: const Color(0xff00d7f3),
+          onPressed: () {
+            setState(() {
+              todos.insert(deletedTodoPos!, deletedTodo!);
+            });
+          },
+        ),
+      ),
+    );
+  }
+
+  void showDeleteTodosConfirmationDialog() {
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: Text('Limpar tudo?'),
+        content: Text('Você tem a certeza que deseja apagar todas as tarefas?'),
+        actions: [
+          TextButton(
+            onPressed: () {
+              Navigator.of(context).pop();
+            },
+            style: TextButton.styleFrom(foregroundColor: Color.fromARGB(255, 5, 191, 216)),
+            child: Text('Cancelar'),
+          ),
+          TextButton(
+              onPressed: () {
+                Navigator.of(context).pop();
+                deleteAllTodos();
+              },
+              style: TextButton.styleFrom(foregroundColor: Colors.red),
+              child: Text('Limpar tudo')),
+        ],
+      ),
+    );
+  }
+
+  void deleteAllTodos(){
+    setState(() {
+      todos.clear();
     });
   }
 }
